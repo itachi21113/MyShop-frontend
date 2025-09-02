@@ -47,3 +47,36 @@ function createCartItem(item) {
         </div>
     `;
 }
+
+function createOrderHistoryItem(order) {
+  // Create a list of items for the order
+  const itemsHtml = order.items
+    .map(
+      (item) => `
+        <div class="order-item">
+            <span>${item.productName} (x${item.quantity})</span>
+            <span>$${item.subtotal.toFixed(2)}</span>
+        </div>
+    `
+    )
+    .join("");
+
+  // Format the date to be more readable
+  const orderDate = new Date(order.orderDate).toLocaleDateString();
+
+  return `
+        <div class="order-card">
+            <div class="order-card-header">
+                <h4>Order #${order.id}</h4>
+                <span>${orderDate}</span>
+            </div>
+            <div class="order-card-body">
+                <p><strong>Status:</strong> ${order.status}</p>
+                <p><strong>Total:</strong> $${order.totalAmount.toFixed(2)}</p>
+                <div class="order-items-container">
+                    ${itemsHtml}
+                </div>
+            </div>
+        </div>
+    `;
+}
