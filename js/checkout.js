@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
  * 1. Creates an Order from the user's cart.
  * 2. Uses the new Order ID to create a Payment Intent.
  * 3. Renders the Stripe payment form.
+ * hello
  */
 async function initializeCheckout() {
   const stripe = Stripe(config.stripePublishableKey);
