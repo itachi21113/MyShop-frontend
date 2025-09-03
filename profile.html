@@ -1,57 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Profile - MyStore</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css" />
     <style>
-        .profile-container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background: #fff;
-            border-radius: 8px;
-        }
-        .order-history {
-            margin-top: 2rem;
-        }
-        .order-card {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-        .order-card h4 {
-            margin-top: 0;
-        }
-        .order-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            padding: 0.25rem 0;
-        }
-        .success-message {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 1rem;
-            border-radius: 5px;
-            text-align: center;
-            margin-bottom: 1rem;
-        }
+      .profile-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: #fff;
+        border-radius: 8px;
+      }
+      .order-history {
+        margin-top: 2rem;
+      }
+      .order-card {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+      .order-card h4 {
+        margin-top: 0;
+      }
+      .order-item {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        padding: 0.25rem 0;
+      }
+      .success-message {
+        background-color: #d4edda;
+        color: #155724;
+        padding: 1rem;
+        border-radius: 5px;
+        text-align: center;
+        margin-bottom: 1rem;
+      }
     </style>
-</head>
-<body id="profile-page">
-
+  </head>
+  <body id="profile-page">
     <header>
-        <nav>
-            <div class="logo">
-                <a href="index.html">MyStore</a>
-            </div>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-            </ul>
-            <div class="nav-actions">
-                <a href="cart.html" id="cart-link">Cart (<span id="cart-count">0</span>)</a>
-                <a href="login.html" id="login-link">Login</a>
-                <a href="profile.html" id
+      <nav>
+        <div class="logo">
+          <a href="index.html">MyStore</a>
+        </div>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="cart.html" id="cart-link"
+            >Cart (<span id="cart-count">0</span>)</a
+          >
+          <a href="admin.html" id="admin-link" class="hidden">Admin</a>
+
+          <a href="login.html" id="login-link">Login</a>
+          <a href="profile.html" id="profile-link" class="hidden">Profile</a>
+          <a href="#" id="logout-link" class="hidden">Logout</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <div class="profile-container">
+        <h1>My Profile</h1>
+        <div id="success-message-container"></div>
+        <div id="profile-info">
+          <p>Loading profile...</p>
+        </div>
+
+        <div class="order-history">
+          <h2>Order History</h2>
+          <div id="order-history">
+            <p>Loading order history...</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 My E-Commerce Store</p>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/profile.js"></script>
+  </body>
+</html>

@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8080/api";
+const API_BASE_URL = "/api";
 
 async function fetchWithAuth(url, options = {}) {
   const token = localStorage.getItem("authToken");
@@ -52,4 +52,9 @@ const createPaymentIntent = (orderId) =>
   fetchWithAuth("/payments/create-intent", {
     method: "POST",
     body: JSON.stringify({ orderId: orderId }),
+  });
+const createProduct = (productData) =>
+  fetchWithAuth("/products", {
+    method: "POST",
+    body: JSON.stringify(productData),
   });

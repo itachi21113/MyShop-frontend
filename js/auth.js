@@ -56,19 +56,54 @@ document.addEventListener("DOMContentLoaded", () => {
   updateNavUI();
 });
 
+// Replace your old updateNavUI function with this new one in auth.js
+
 function updateNavUI() {
   const token = localStorage.getItem("authToken");
   const loginLink = document.getElementById("login-link");
   const profileLink = document.getElementById("profile-link");
   const logoutLink = document.getElementById("logout-link");
+  const adminLink = document.getElementById("admin-link"); // Get the new admin link
 
   if (token) {
     loginLink.classList.add("hidden");
     profileLink.classList.remove("hidden");
     logoutLink.classList.remove("hidden");
+
+    // --- THIS IS THE NEW LOGIC ---
+    const userData = decodeJwt(token);
+    // Check if the decoded token has a 'roles' array that includes 'ROLE_ADMIN'
+    if (userData && userData.roles && userData.roles.includes("ROLE_ADMIN")) {
+      adminLink.classList.remove("hidden"); // Show the admin link
+    } else {
+      adminLink.classList.add("hidden"); // Hide it for non-admins
+    }
+    // -----------------------------
   } else {
     loginLink.classList.remove("hidden");
     profileLink.classList.add("hidden");
     logoutLink.classList.add("hidden");
+    adminLink.classList.add("hidden"); // Ensure admin link is hidden when not logged in
+  }
+}
+
+// Add this function to the bottom of auth.js
+function decodeJwt(token) {
+  try {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
+
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    console.error("Failed to decode JWT:", e);
+    return null;
   }
 }
