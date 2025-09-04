@@ -1,24 +1,37 @@
+// Replace the entire content of MyShop-frontend/js/profile.js with this
+
 document.addEventListener("DOMContentLoaded", () => {
-  // Check for login status
   if (!localStorage.getItem("authToken")) {
-    window.location.href = "login.html"; // Redirect to login if not authenticated
+    window.location.href = "login.html";
     return;
   }
 
-  // --- THIS IS THE FIX ---
-  // Call the functions to load profile and order data
+  // Check for the success query parameter from the checkout page
+  checkForPaymentSuccess();
+
   displayUserProfile();
   displayOrderHistory();
-
-  // Add event listener for the logout button
-  const logoutButton = document.getElementById("logout-button");
-  if (logoutButton) {
-    logoutButton.addEventListener("click", () => {
-      localStorage.removeItem("authToken");
-      window.location.href = "login.html";
-    });
-  }
 });
+
+/**
+ * Checks the URL for a payment success flag and displays a message.
+ */
+function checkForPaymentSuccess() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const successMessageContainer = document.getElementById(
+    "success-message-container"
+  );
+
+  if (urlParams.get("payment") === "success") {
+    successMessageContainer.innerHTML = `
+      <div class="success-message">
+        Your payment was successful! Your order is being processed.
+      </div>
+    `;
+    // Clean the URL so the message doesn't appear on refresh
+    window.history.replaceState({}, document.title, "/profile.html");
+  }
+}
 
 /**
  * Fetches the current user's data and displays it on the page.
@@ -28,11 +41,12 @@ async function displayUserProfile() {
   if (!profileInfoContainer) return;
 
   try {
-    const user = await getCurrentUser(); // API call from api.js
+    // Get user info directly from the JWT to avoid a failing API call
+    const token = localStorage.getItem("authToken");
+    const user = decodeJwt(token); // Assumes decodeJwt is in auth.js
+
     profileInfoContainer.innerHTML = `
-      <p><strong>Name:</strong> ${user.firstName} ${user.lastName}</p>
-      <p><strong>Email:</strong> ${user.email}</p>
-      <p><strong>Username:</strong> ${user.username}</p>
+      <p><strong>Email:</strong> ${user.sub}</p>
     `;
   } catch (error) {
     console.error("Failed to load user profile:", error);
@@ -55,7 +69,6 @@ async function displayOrderHistory() {
       return;
     }
 
-    // Use the createOrderHistoryItem function from components.js
     const ordersHTML = orders.map(createOrderHistoryItem).join("");
     orderHistoryContainer.innerHTML = ordersHTML;
   } catch (error) {

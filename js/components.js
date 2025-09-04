@@ -47,3 +47,34 @@ function createCartItem(item) {
         </div>
     `;
 }
+
+// Add this function to the bottom of MyShop-frontend/js/components.js
+
+/**
+ * Creates the HTML for a single order in the order history.
+ * @param {object} order - The order object from the API.
+ * @returns {string} The HTML string for the order card.
+ */
+function createOrderHistoryItem(order) {
+  const orderDate = new Date(order.orderDate).toLocaleDateString();
+  const itemsHTML = order.items
+    .map(
+      (item) => `
+        <div class="order-item">
+            <span>${item.productName} (x${item.quantity})</span>
+            <span>$${item.subtotal.toFixed(2)}</span>
+        </div>
+    `
+    )
+    .join("");
+
+  return `
+        <div class="order-card">
+            <h4>Order #${order.id} - ${order.status}</h4>
+            <p><strong>Date:</strong> ${orderDate}</p>
+            <p><strong>Total:</strong> $${order.totalAmount.toFixed(2)}</p>
+            <hr>
+            ${itemsHTML}
+        </div>
+    `;
+}
