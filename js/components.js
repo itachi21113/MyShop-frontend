@@ -48,9 +48,14 @@ function createCartItem(item) {
     `;
 }
 
+/**
+ * Creates the HTML for a single order in the order history.
+ * @param {object} order - The order object from the API.
+ * @returns {string} The HTML string for the order card.
+ */
 function createOrderHistoryItem(order) {
-  // Create a list of items for the order
-  const itemsHtml = order.items
+  const orderDate = new Date(order.orderDate).toLocaleDateString();
+  const itemsHTML = order.items
     .map(
       (item) => `
         <div class="order-item">
@@ -61,22 +66,13 @@ function createOrderHistoryItem(order) {
     )
     .join("");
 
-  // Format the date to be more readable
-  const orderDate = new Date(order.orderDate).toLocaleDateString();
-
   return `
         <div class="order-card">
-            <div class="order-card-header">
-                <h4>Order #${order.id}</h4>
-                <span>${orderDate}</span>
-            </div>
-            <div class="order-card-body">
-                <p><strong>Status:</strong> ${order.status}</p>
-                <p><strong>Total:</strong> $${order.totalAmount.toFixed(2)}</p>
-                <div class="order-items-container">
-                    ${itemsHtml}
-                </div>
-            </div>
+            <h4>Order #${order.id} - ${order.status}</h4>
+            <p><strong>Date:</strong> ${orderDate}</p>
+            <p><strong>Total:</strong> $${order.totalAmount.toFixed(2)}</p>
+            <hr>
+            ${itemsHTML}
         </div>
     `;
 }

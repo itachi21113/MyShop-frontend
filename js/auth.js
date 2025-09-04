@@ -13,7 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const data = await loginUser({ email, password });
         localStorage.setItem("authToken", data.accessToken);
-        window.location.href = "index.html"; // Redirect to homepage
+        updateNavUI(); // Immediately update UI after login
+        window.location.href = "index.html";
       } catch (error) {
         alert(`Login failed: ${error.message}`);
       }
@@ -21,18 +22,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Handle Registration
-
   if (registerForm) {
     registerForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      // Read from the new firstName and lastName fields
       const firstName = e.target.firstName.value;
       const lastName = e.target.lastName.value;
       const email = e.target.email.value;
       const password = e.target.password.value;
 
       try {
-        // Send the data in the format the backend expects
         await registerUser({ firstName, lastName, email, password });
         alert("Registration successful! Please log in.");
         window.location.href = "login.html";
@@ -56,19 +54,59 @@ document.addEventListener("DOMContentLoaded", () => {
   updateNavUI();
 });
 
+// In MyShop-frontend/js/auth.js
+
 function updateNavUI() {
   const token = localStorage.getItem("authToken");
   const loginLink = document.getElementById("login-link");
   const profileLink = document.getElementById("profile-link");
   const logoutLink = document.getElementById("logout-link");
+  const adminLink = document.getElementById("admin-link");
 
   if (token) {
     loginLink.classList.add("hidden");
     profileLink.classList.remove("hidden");
     logoutLink.classList.remove("hidden");
+
+    const userData = decodeJwt(token);
+
+    // --- ADD THESE TWO LINES FOR DEBUGGING ---
+    console.log("Decoded Token Data:", userData);
+    console.log(
+      "Is Admin:",
+      userData && userData.roles && userData.roles.includes("ROLE_ADMIN")
+    );
+    // -----------------------------------------
+
+    if (userData && userData.roles && userData.roles.includes("ROLE_ADMIN")) {
+      adminLink.classList.remove("hidden");
+    } else {
+      adminLink.classList.add("hidden");
+    }
   } else {
     loginLink.classList.remove("hidden");
     profileLink.classList.add("hidden");
     logoutLink.classList.add("hidden");
+    adminLink.classList.add("hidden");
+  }
+}
+
+function decodeJwt(token) {
+  try {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
+
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    console.error("Failed to decode JWT:", e);
+    return null;
   }
 }

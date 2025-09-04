@@ -1,39 +1,39 @@
+// MyShop-frontend/js/profile.js
+
 document.addEventListener("DOMContentLoaded", () => {
-  // Check for login status
   if (!localStorage.getItem("authToken")) {
-    window.location.href = "login.html"; // Redirect to login if not authenticated
+    window.location.href = "login.html";
     return;
   }
 
-  // --- THIS IS THE FIX ---
-  // Call the functions to load profile and order data
+  checkForPaymentSuccess();
   displayUserProfile();
   displayOrderHistory();
-
-  // Add event listener for the logout button
-  const logoutButton = document.getElementById("logout-button");
-  if (logoutButton) {
-    logoutButton.addEventListener("click", () => {
-      localStorage.removeItem("authToken");
-      window.location.href = "login.html";
-    });
-  }
 });
 
-/**
- * Fetches the current user's data and displays it on the page.
- */
+function checkForPaymentSuccess() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const successMessageContainer = document.getElementById(
+    "success-message-container"
+  );
+
+  if (urlParams.get("payment") === "success") {
+    successMessageContainer.innerHTML = `
+      <div class="success-message">
+        Your payment was successful! Your order is being processed.
+      </div>
+    `;
+    window.history.replaceState({}, document.title, "/profile.html");
+  }
+}
+
 async function displayUserProfile() {
   const profileInfoContainer = document.getElementById("profile-info");
   if (!profileInfoContainer) return;
 
   try {
-    const user = await getCurrentUser(); // API call from api.js
-    profileInfoContainer.innerHTML = `
-      <p><strong>Name:</strong> ${user.firstName} ${user.lastName}</p>
-      <p><strong>Email:</strong> ${user.email}</p>
-      <p><strong>Username:</strong> ${user.username}</p>
-    `;
+    const user = await getCurrentUser();
+    profileInfoContainer.innerHTML = `<p><strong>Email:</strong> ${user.email}</p>`;
   } catch (error) {
     console.error("Failed to load user profile:", error);
     profileInfoContainer.innerHTML =
@@ -41,21 +41,18 @@ async function displayUserProfile() {
   }
 }
 
-/**
- * Fetches the user's order history and displays it.
- */
 async function displayOrderHistory() {
   const orderHistoryContainer = document.getElementById("order-history");
   if (!orderHistoryContainer) return;
 
   try {
-    const orders = await getOrders(); // API call from api.js
+    const orders = await getOrders();
     if (orders.length === 0) {
       orderHistoryContainer.innerHTML = "<p>You have no past orders.</p>";
       return;
     }
 
-    // Use the createOrderHistoryItem function from components.js
+    // This will now work because profile.html loads components.js first
     const ordersHTML = orders.map(createOrderHistoryItem).join("");
     orderHistoryContainer.innerHTML = ordersHTML;
   } catch (error) {
