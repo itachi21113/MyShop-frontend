@@ -48,8 +48,6 @@ function createCartItem(item) {
     `;
 }
 
-// Add this function to the bottom of MyShop-frontend/js/components.js
-
 /**
  * Creates the HTML for a single order in the order history.
  * @param {object} order - The order object from the API.
